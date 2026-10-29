@@ -13,11 +13,19 @@ esac
 
 : "${BUILD_IT_DOCKER_SOCKET:=}"
 if [ -z "$BUILD_IT_DOCKER_SOCKET" ]; then
-  for s in "/run/user/$(id -u)/podman/podman.sock" "/var/run/docker.sock"; do
+  case "${DOCKER_HOST:-}" in
+    unix://*) BUILD_IT_DOCKER_SOCKET="${DOCKER_HOST#unix://}" ;;
+  esac
+fi
+if [ -z "$BUILD_IT_DOCKER_SOCKET" ]; then
+  for s in "/run/user/$(id -u)/podman/podman.sock" /var/run/docker.sock; do
     if [ -S "$s" ]; then BUILD_IT_DOCKER_SOCKET="$s"; break; fi
   done
 fi
-[ -S "$BUILD_IT_DOCKER_SOCKET" ] || { echo "ERROR: sin socket de contenedores (definí BUILD_IT_DOCKER_SOCKET)" >&2; exit 1; }
+if [ ! -S "$BUILD_IT_DOCKER_SOCKET" ]; then
+  echo "ERROR: no se encontró un socket Unix de contenedores. Revisá DOCKER_HOST (${DOCKER_HOST:-no definido}) o definí BUILD_IT_DOCKER_SOCKET con la ruta del socket." >&2
+  exit 1
+fi
 
 # Directorios que compose bind-monta dentro del contenedor: crearlos ANTES del
 # mount para que podman nunca los cree él (si faltan, aparecen con dueño
