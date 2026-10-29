@@ -3,9 +3,19 @@
   "dockerComposeFile": "compose.json",
   "service": "dev",
   "workspaceFolder": "/Build-It",
-  "remoteUser": "vscode",
-  // "initializeCommand": ".devcontainer/scripts/select-db.sh",
+  "remoteUser": "${localEnv:USER}",
+  "updateRemoteUserUID": false,
+  "initializeCommand": ".devcontainer/scripts/select-db.sh",
   "features": {
+    "ghcr.io/devcontainers/features/common-utils:2": {
+      "username": "automatic",
+      "userUid": "automatic",
+      "userGid": "automatic",
+      "installZsh": false,
+      "installOhMyZsh": false,
+      "installOhMyZshConfig": false,
+      "upgradePackages": false
+    },
     "ghcr.io/agustin-gigena/devcontainer-features/dotnet-tools:1.0.0": {
       "tools": "dotnet-ef"
     },

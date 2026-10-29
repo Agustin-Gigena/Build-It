@@ -27,6 +27,18 @@ if [ ! -S "$BUILD_IT_DOCKER_SOCKET" ]; then
   exit 1
 fi
 
+if ! command -v gh >/dev/null 2>&1 || ! command -v podman >/dev/null 2>&1; then
+  echo "ERROR: se requieren gh y podman en el host para autenticar la descarga de la imagen privada de GHCR." >&2
+  exit 1
+fi
+
+echo "Autenticando Podman en ghcr.io con la sesión existente de GitHub CLI..."
+gh_username="$(gh api user --jq .login)"
+mkdir -p "$HOME/.docker"
+gh auth token --hostname github.com |
+  podman login --compat-auth-file "$HOME/.docker/config.json" \
+    --username "$gh_username" --password-stdin ghcr.io
+
 # Directorios que compose bind-monta dentro del contenedor: crearlos ANTES del
 # mount para que podman nunca los cree él (si faltan, aparecen con dueño
 # incorrecto y VS Code no puede escribirlos).
@@ -36,4 +48,8 @@ mkdir -p .devcontainer
 cat > .devcontainer/.env <<EOF
 BUILD_IT_DB_IMAGE=ghcr.io/agustin-gigena/build-it-db-${branch}:latest
 BUILD_IT_DOCKER_SOCKET=${BUILD_IT_DOCKER_SOCKET}
+BUILD_IT_USER_NAME=$(id -un)
+BUILD_IT_USER_GROUP=$(id -gn)
+BUILD_IT_USER_UID=$(id -u)
+BUILD_IT_USER_GID=$(id -g)
 EOF

@@ -3,7 +3,7 @@
 # setup.sh — aprovisionamiento del contenedor de desarrollo (postCreateCommand)
 # =============================================================================
 # Corre UNA VEZ por creación del contenedor (devcontainer CLI / VS Code),
-# dentro del contenedor, como el usuario `vscode`, después de que las features
+# dentro del contenedor, como el usuario del host, después de que las features
 # (node, apt packages) estén instaladas.
 #
 # Falla rápido: cada paso está encadenado con && — si algo falla, el postCreate

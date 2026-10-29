@@ -3,9 +3,19 @@
   "services": {
     "dev": {
       "image": "mcr.microsoft.com/devcontainers/dotnet:dev-10.0-noble",
+      "build": {
+        "context": ".",
+        "dockerfile": "Dockerfile",
+        "args": {
+          "LOCAL_USER": "${BUILD_IT_USER_NAME}",
+          "LOCAL_GROUP": "${BUILD_IT_USER_GROUP}",
+          "LOCAL_UID": "${BUILD_IT_USER_UID}",
+          "LOCAL_GID": "${BUILD_IT_USER_GID}"
+        }
+      },
       "init": true,
       "security_opt": ["label=disable"],
-      "user": "vscode",
+      "user": "${BUILD_IT_USER_NAME}",
       "userns_mode": "keep-id",
       "command": "sleep infinity",
       "sysctls": {
@@ -15,10 +25,10 @@
       "volumes": [
         "..:/Build_it:cached",
         "${BUILD_IT_DOCKER_SOCKET}:/var/run/docker.sock",
-        "${HOME}/.omp:/home/vscode/.omp",
-        "${HOME}/.config/gh:/home/vscode/.config/gh",
-        "${HOME}/.aspnet:/home/vscode/.aspnet",
-        "nuget-packages:/home/vscode/.nuget"
+        "${HOME}/.omp:/home/${BUILD_IT_USER_NAME}/.omp",
+        "${HOME}/.config/gh:/home/${BUILD_IT_USER_NAME}/.config/gh",
+        "${HOME}/.aspnet:/home/${BUILD_IT_USER_NAME}/.aspnet",
+        "nuget-packages:/home/${BUILD_IT_USER_NAME}/.nuget"
       ],
       "depends_on": { "db": { "condition": "service_healthy" } }
     },
