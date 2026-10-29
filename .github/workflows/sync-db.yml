@@ -1,0 +1,37 @@
+name: Publish MySQL image
+
+on:
+  push:
+    branches: [production, development, release_candidate]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  publish:
+    if: |
+      github.event_name == 'push' ||
+      contains(fromJSON('["production","development","release_candidate"]'), github.ref_name)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Podman
+        run: |
+          if ! command -v podman >/dev/null 2>&1; then
+            sudo apt-get update
+            sudo apt-get install -y podman
+          fi
+      - name: Log in to GHCR
+        env:
+          GHCR_USER: ${{ github.actor }}
+          GHCR_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: printf '%s' "$GHCR_TOKEN" | podman login ghcr.io --username "$GHCR_USER" --password-stdin
+      - name: Build and publish
+        env:
+          BUILD_IT_DB_IMAGE: ghcr.io/${{ github.repository_owner }}/build-it-db-${{ github.ref_name }}
+          BUILD_IT_SOURCE_URL: https://github.com/${{ github.repository }}
+          BUILD_IT_DB_TAG: latest
+          BUILD_IT_CONTAINER_ENGINE: podman
+        run: scripts/build-db-image.sh
