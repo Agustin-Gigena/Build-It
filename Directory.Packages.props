@@ -1,0 +1,17 @@
+<Project>
+  <PropertyGroup>
+    <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+  </PropertyGroup>
+  <ItemGroup>
+    <!-- Datos (BuildIt.Api): EF Core 10 + proveedor MySQL oficial (único GA compatible con EF 10; Pomelo sigue en 9.x) -->
+    <PackageVersion Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.14" />
+    <PackageVersion Include="MySql.EntityFrameworkCore" Version="10.0.12" />
+    <!-- OAuth2/OIDC: OpenIddict 7.7.2 (TFM net10.0, requiere EF Core Relational >= 10.0.11) -->
+    <PackageVersion Include="OpenIddict.AspNetCore" Version="7.7.2" />
+    <PackageVersion Include="OpenIddict.EntityFrameworkCore" Version="7.7.2" />
+    <!-- MAUI Blazor Hybrid -->
+    <PackageVersion Include="Microsoft.AspNetCore.Components.WebView.Maui" Version="10.0.120" />
+    <PackageVersion Include="Microsoft.Maui.Controls" Version="10.0.120" />
+    <PackageVersion Include="Microsoft.Maui.Extensions" Version="10.0.120" />
+  </ItemGroup>
+</Project>

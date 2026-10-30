@@ -1,1 +1,18 @@
+# Secretos del devcontainer
 .devcontainer/.env
+
+# Node (raíz: herramientas del monorepo)
+/node_modules/
+/package.json
+/package-lock.json
+
+# Salida del pipeline CSS (se genera, no se versiona)
+/src/BuildIt.SharedUI/wwwroot/css/
+
+# Artefactos .NET
+bin/
+obj/
+.vs/
+.idea/
+*.user
+*.suo
