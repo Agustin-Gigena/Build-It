@@ -28,12 +28,26 @@
         "action": "openExternally",
         "pattern": "\\bNow listening on:\\s+(https?://\\S+)"
       }
+    },
+    {
+      "name": "Maui (Android)",
+      "type": "dotnet",
+      "request": "launch",
+      "projectPath": "${workspaceFolder}/src/BuildIt.Maui/BuildIt.Maui.csproj",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      }
     }
   ],
   "compounds": [
     {
       "name": "▶ API + WEB",
       "configurations": ["Api", "Web"],
+      "stopAll": true
+    },
+    {
+      "name": "▶ API + MAUI (Android)",
+      "configurations": ["Api", "Maui (Android)"],
       "stopAll": true
     }
   ]

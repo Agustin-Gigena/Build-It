@@ -43,7 +43,7 @@ lefthook install                      # activa los hooks (ya ejecutado en este r
 | Modo | Sin debugger (tasks) | Con debugger (F5) | URLs |
 |---|---|---|---|
 | **API + WEB** | task `🔁 MODO: API + WEB (watch)` (dotnet watch x2) | compound `▶ API + WEB` (`coreclr`, build previo incluido) | Api http://localhost:8080 · Web http://localhost:5000 |
-| **API + MAUI** | task `🔁 MODO: API + MAUI (watch)` (Api en watch + deploy Android) | Api: F5 config `Api` · app: task `run: maui (android)` | Api http://localhost:8080 · app en emulador/dispositivo |
+| **API + MAUI** | task `🔁 MODO: API + MAUI (watch)` (Api en watch + deploy Android) | compound `▶ API + MAUI (Android)` — Api en `coreclr` + Maui en `dotnet` | Api http://localhost:8080 · app en emulador/dispositivo |
 
 Notas de modo MAUI:
 - El `appsettings.json` de `BuildIt.Maui` apunta a `http://10.0.2.2:8080` (loopback del host visto por el emulador Android). Dispositivo físico por USB/LAN: reemplazar por la IP LAN (vía `usbipd-win` en WSL2 + `adb`).
