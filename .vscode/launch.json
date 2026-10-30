@@ -10,7 +10,7 @@
       "cwd": "${workspaceFolder}/src/BuildIt.Api",
       "env": {
         "ASPNETCORE_ENVIRONMENT": "Development",
-        "ASPNETCORE_URLS": "http://localhost:8080"
+        "ASPNETCORE_URLS": "http://0.0.0.0:8080"
       }
     },
     {
@@ -22,7 +22,7 @@
       "cwd": "${workspaceFolder}/src/BuildIt.Web",
       "env": {
         "ASPNETCORE_ENVIRONMENT": "Development",
-        "ASPNETCORE_URLS": "http://localhost:5000"
+        "ASPNETCORE_URLS": "http://0.0.0.0:5000"
       },
       "serverReadyAction": {
         "action": "openExternally",
@@ -41,12 +41,12 @@
   ],
   "compounds": [
     {
-      "name": "▶ API + WEB",
+      "name": "API + WEB",
       "configurations": ["Api", "Web"],
       "stopAll": true
     },
     {
-      "name": "▶ API + MAUI (Android)",
+      "name": "API + MAUI (Android)",
       "configurations": ["Api", "Maui (Android)"],
       "stopAll": true
     }

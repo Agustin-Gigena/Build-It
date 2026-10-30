@@ -40,6 +40,12 @@ lefthook install                      # activa los hooks (ya ejecutado en este r
 
 ## Ejecución local (VS Code: `.vscode/tasks.json` + `launch.json`)
 
+> **Bind `0.0.0.0` en dev**: Kestrel en `localhost` solo escucha el loopback del
+> contenedor y el port-forwarding de VS Code llega por la interfaz del contenedor →
+> desde fuera "no responde" (verificado: `curl <ip-contenedor>` da `000` con bind
+> `localhost`). Producción fija su propio `ASPNETCORE_URLS`; estos perfiles son
+> solo Development.
+
 | Modo | Sin debugger (tasks) | Con debugger (F5) | URLs |
 |---|---|---|---|
 | **API + WEB** | task `🔁 MODO: API + WEB (watch)` (dotnet watch x2) | compound `▶ API + WEB` (`coreclr`, build previo incluido) | Api http://localhost:8080 · Web http://localhost:5000 |
