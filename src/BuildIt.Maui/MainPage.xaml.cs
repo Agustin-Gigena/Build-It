@@ -2,9 +2,8 @@ namespace BuildIt.Maui;
 
 public partial class MainPage : ContentPage
 {
-    public MainPage(IServiceProvider services)
+    public MainPage()
     {
         InitializeComponent();
-        Blazor.Services = services;
     }
 }

@@ -3,6 +3,10 @@
   <PropertyGroup>
     <TargetFrameworks>net10.0-android;net10.0-ios;net10.0-maccatalyst</TargetFrameworks>
     <TargetFrameworks Condition="$([MSBuild]::IsOSPlatform('windows'))">$(TargetFrameworks);net10.0-windows10.0.19041.0</TargetFrameworks>
+    <!-- -p:AndroidOnly=true: recorta TFMs para restore/build en hosts sin soporte iOS
+         (.NET 10 eliminó los workloads ios/maccatalyst en Linux). Los ProjectReferences
+         no leen esta propiedad, así que no hay fuga de global property. -->
+    <TargetFrameworks Condition="'$(AndroidOnly)' == 'true'">net10.0-android</TargetFrameworks>
     <OutputType>Exe</OutputType>
     <UseMaui>true</UseMaui>
     <SingleProject>true</SingleProject>

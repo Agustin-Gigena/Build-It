@@ -63,6 +63,11 @@ Notas de modo MAUI:
   ⚠️ El workload vive en la capa de imagen del contenedor: tras un rebuild del devcontainer
   hay que reinstalarlo (`sudo dotnet workload install maui-android`). Considerar hornearlo
   en el Dockerfile/feature para eliminar el paso manual.
+- Provisioning único del SDK/JDK (ya ejecutado en este contenedor):
+  `dotnet build src/BuildIt.Maui -t:InstallAndroidDependencies -f net10.0-android -p:AndroidOnly=true -p:AndroidSdkDirectory=$HOME/.local/share/Android/sdk -p:JavaSdkDirectory=$HOME/.local/share/Android/jdk -p:AcceptAndroidSDKLicenses=True`
+- Build Android: `JAVA_HOME=$HOME/.local/share/Android/jdk dotnet build src/BuildIt.Maui -f net10.0-android -p:AndroidOnly=true -p:AndroidSdkDirectory=$HOME/.local/share/Android/sdk`
+  (`-p:AndroidOnly=true` recorta TFMs: .NET 10 eliminó los workloads iOS/MacCatalyst en
+  Linux y el restore completo los exigiría).
 - **Debug con breakpoints de la app MAUI en Android**: requiere C# Dev Kit (tipo `dotnet` en launch.json) + extensión .NET MAUI. Sin Dev Kit, el modo soportado es la task `run: maui (android)` (deploy + launch sin debugger). Los configs de Api/Web usan `coreclr` (C# extension): no leen `launchSettings.json`, por eso fijan `ASPNETCORE_URLS` explícito.
 
 ## Matriz de tests

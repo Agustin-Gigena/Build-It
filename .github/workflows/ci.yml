@@ -85,6 +85,7 @@ jobs:
         run: dotnet workload install maui-android
 
       - name: Build Android
-        # Restore valida TODOS los TargetFrameworks del csproj (exigiría packs de
-        # iOS no incluidos en maui-android): se pisa la lista para esta compilación.
-        run: dotnet build src/BuildIt.Maui -f net10.0-android -p:TargetFrameworks=net10.0-android -c Release
+        # -p:AndroidOnly=true: recorta los TFMs del csproj a android (en .NET 10 no hay
+        # workloads ios/maccatalyst para Linux y el restore los exigiría). A diferencia
+        # de -p:TargetFrameworks, no filtra como global property a los ProjectReferences.
+        run: dotnet build src/BuildIt.Maui -f net10.0-android -p:AndroidOnly=true -c Release
