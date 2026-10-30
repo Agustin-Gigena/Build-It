@@ -5,6 +5,10 @@
     <TargetFramework>net10.0</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
+    <!-- Pipeline estándar retry/circuit-breaker/timeout para el HttpClient → Api -->
+    <PackageReference Include="Microsoft.Extensions.Http.Resilience" />
+  </ItemGroup>
+  <ItemGroup>
     <ProjectReference Include="..\BuildIt.Shared\BuildIt.Shared.csproj" />
     <ProjectReference Include="..\BuildIt.SharedUI\BuildIt.SharedUI.csproj" />
   </ItemGroup>

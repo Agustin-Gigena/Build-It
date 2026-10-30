@@ -1,0 +1,44 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Api",
+      "type": "dotnet",
+      "request": "launch",
+      "projectPath": "${workspaceFolder}/src/BuildIt.Api/BuildIt.Api.csproj",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      }
+    },
+    {
+      "name": "Web",
+      "type": "dotnet",
+      "request": "launch",
+      "projectPath": "${workspaceFolder}/src/BuildIt.Web/BuildIt.Web.csproj",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      }
+    },
+    {
+      "name": "Maui (Android)",
+      "type": "dotnet",
+      "request": "launch",
+      "projectPath": "${workspaceFolder}/src/BuildIt.Maui/BuildIt.Maui.csproj",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      }
+    }
+  ],
+  "compounds": [
+    {
+      "name": "▶ API + WEB",
+      "configurations": ["Api", "Web"],
+      "stopAll": true
+    },
+    {
+      "name": "▶ API + MAUI (Android)",
+      "configurations": ["Api", "Maui (Android)"],
+      "stopAll": true
+    }
+  ]
+}

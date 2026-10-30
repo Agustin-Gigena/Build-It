@@ -1,2 +1,15 @@
 <Solution>
+  <Folder Name="/src/">
+    <Project Path="src/BuildIt.Api/BuildIt.Api.csproj" />
+    <Project Path="src/BuildIt.Maui/BuildIt.Maui.csproj" />
+    <Project Path="src/BuildIt.Shared/BuildIt.Shared.csproj" />
+    <Project Path="src/BuildIt.SharedUI/BuildIt.SharedUI.csproj" />
+    <Project Path="src/BuildIt.Web/BuildIt.Web.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/BuildIt.Api.Tests/BuildIt.Api.Tests.csproj" />
+    <Project Path="tests/BuildIt.Shared.Tests/BuildIt.Shared.Tests.csproj" />
+    <Project Path="tests/BuildIt.SharedUI.Tests/BuildIt.SharedUI.Tests.csproj" />
+    <Project Path="tests/BuildIt.Web.Tests/BuildIt.Web.Tests.csproj" />
+  </Folder>
 </Solution>

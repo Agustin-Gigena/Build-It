@@ -1,0 +1,15 @@
+# Hooks de git (activar con `lefthook install`; ya ejecutado en este repo).
+# Doc: https://lefthook.dev
+# El gate de formato vive en CI (dotnet format sobre BuildIt.slnf): un pre-commit
+# de formato abre la workspace completa y no califica como hook instantáneo.
+pre-push:
+  commands:
+    unit-tests:
+      # Testeo mínimo pre-push: solo unit tests (segundos, sin Docker).
+      # Convención congelada: los tests que requieren contenedor llevan
+      # [Trait("Category", "Integration")] y corren EXCLUSIVAMENTE en CI.
+      run: |
+        dotnet test tests/BuildIt.Shared.Tests
+        dotnet test tests/BuildIt.Api.Tests --filter "Category!=Integration"
+        dotnet test tests/BuildIt.SharedUI.Tests
+        dotnet test tests/BuildIt.Web.Tests

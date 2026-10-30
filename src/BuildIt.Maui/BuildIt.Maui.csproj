@@ -21,6 +21,16 @@
     <TargetPlatformMinVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'">10.0.17763.0</TargetPlatformMinVersion>
   </PropertyGroup>
   <ItemGroup>
+    <!-- Pipeline estándar retry/circuit-breaker/timeout para el HttpClient → Api -->
+    <PackageReference Include="Microsoft.Extensions.Http.Resilience" />
+  </ItemGroup>
+  <ItemGroup>
+    <!-- Config leída en runtime por MauiProgram (fase de implementación).
+         10.0.2.2 = loopback del host visto desde el emulador Android.
+         Dispositivo físico por USB/LAN: reemplazar por IP LAN de la máquina. -->
+    <EmbeddedResource Include="appsettings.json" />
+  </ItemGroup>
+  <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Components.WebView.Maui" />
     <PackageReference Include="Microsoft.Maui.Controls" />
     <PackageReference Include="Microsoft.Maui.Extensions" />
