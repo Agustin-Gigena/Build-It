@@ -1,0 +1,15 @@
+{
+  "solution": {
+    "path": "BuildIt.slnx",
+    "projects": [
+      "src/BuildIt.Shared/BuildIt.Shared.csproj",
+      "src/BuildIt.SharedUI/BuildIt.SharedUI.csproj",
+      "src/BuildIt.Api/BuildIt.Api.csproj",
+      "src/BuildIt.Web/BuildIt.Web.csproj",
+      "tests/BuildIt.Shared.Tests/BuildIt.Shared.Tests.csproj",
+      "tests/BuildIt.Api.Tests/BuildIt.Api.Tests.csproj",
+      "tests/BuildIt.SharedUI.Tests/BuildIt.SharedUI.Tests.csproj",
+      "tests/BuildIt.Web.Tests/BuildIt.Web.Tests.csproj"
+    ]
+  }
+}

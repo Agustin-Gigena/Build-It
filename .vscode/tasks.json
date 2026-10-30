@@ -1,0 +1,68 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "build: api",
+      "type": "shell",
+      "command": "dotnet build src/BuildIt.Api",
+      "problemMatcher": "$msCompile",
+      "group": "build"
+    },
+    {
+      "label": "build: web",
+      "type": "shell",
+      "command": "dotnet build src/BuildIt.Web",
+      "problemMatcher": "$msCompile"
+    },
+    {
+      "label": "build: maui (android)",
+      "type": "shell",
+      "command": "dotnet build src/BuildIt.Maui -f net10.0-android",
+      "problemMatcher": "$msCompile"
+    },
+    {
+      "label": "build: todo",
+      "type": "shell",
+      "command": "for p in src/BuildIt.Shared src/BuildIt.SharedUI src/BuildIt.Api src/BuildIt.Web tests/BuildIt.Shared.Tests tests/BuildIt.Api.Tests tests/BuildIt.SharedUI.Tests tests/BuildIt.Web.Tests; do dotnet build \"$p\" || exit 1; done",
+      "problemMatcher": "$msCompile",
+      "group": { "kind": "build", "isDefault": true }
+    },
+    {
+      "label": "test: mínimo (pre-push)",
+      "type": "shell",
+      "command": "lefthook run pre-push",
+      "problemMatcher": []
+    },
+    {
+      "label": "run: api",
+      "type": "shell",
+      "command": "dotnet watch run --project src/BuildIt.Api",
+      "isBackground": true,
+      "problemMatcher": []
+    },
+    {
+      "label": "run: web",
+      "type": "shell",
+      "command": "dotnet watch run --project src/BuildIt.Web",
+      "isBackground": true,
+      "problemMatcher": []
+    },
+    {
+      "label": "run: maui (android)",
+      "type": "shell",
+      "command": "dotnet build src/BuildIt.Maui -t:Run -f net10.0-android",
+      "isBackground": true,
+      "problemMatcher": []
+    },
+    {
+      "label": "🔁 MODO: API + WEB (watch)",
+      "dependsOn": ["run: api", "run: web"],
+      "problemMatcher": []
+    },
+    {
+      "label": "🔁 MODO: API + MAUI (watch)",
+      "dependsOn": ["run: api", "run: maui (android)"],
+      "problemMatcher": []
+    }
+  ]
+}

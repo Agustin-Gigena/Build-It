@@ -1,0 +1,46 @@
+<Project Sdk="Microsoft.NET.Sdk.Razor">
+  <!-- MAUI Blazor Hybrid: aloja los mismos componentes de la RCL en WebView nativa. -->
+  <PropertyGroup>
+    <TargetFrameworks>net10.0-android;net10.0-ios;net10.0-maccatalyst</TargetFrameworks>
+    <TargetFrameworks Condition="$([MSBuild]::IsOSPlatform('windows'))">$(TargetFrameworks);net10.0-windows10.0.19041.0</TargetFrameworks>
+    <!-- -p:AndroidOnly=true: recorta TFMs para restore/build en hosts sin soporte iOS
+         (.NET 10 eliminó los workloads ios/maccatalyst en Linux). Los ProjectReferences
+         no leen esta propiedad, así que no hay fuga de global property. -->
+    <TargetFrameworks Condition="'$(AndroidOnly)' == 'true'">net10.0-android</TargetFrameworks>
+    <OutputType>Exe</OutputType>
+    <UseMaui>true</UseMaui>
+    <SingleProject>true</SingleProject>
+
+    <!-- Identidad de la aplicación -->
+    <ApplicationId>com.buildit.app</ApplicationId>
+    <ApplicationTitle>BuildIt</ApplicationTitle>
+    <ApplicationDisplayVersion>1.0</ApplicationDisplayVersion>
+    <ApplicationVersion>1</ApplicationVersion>
+
+    <!-- Versiones mínimas de SO por plataforma -->
+    <SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">24</SupportedOSPlatformVersion>
+    <SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'ios'">15.0</SupportedOSPlatformVersion>
+    <SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'maccatalyst'">15.0</SupportedOSPlatformVersion>
+    <SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'">10.0.17763.0</SupportedOSPlatformVersion>
+    <TargetPlatformMinVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'">10.0.17763.0</TargetPlatformMinVersion>
+  </PropertyGroup>
+  <ItemGroup>
+    <!-- Pipeline estándar retry/circuit-breaker/timeout para el HttpClient → Api -->
+    <PackageReference Include="Microsoft.Extensions.Http.Resilience" />
+  </ItemGroup>
+  <ItemGroup>
+    <!-- Config leída en runtime por MauiProgram (fase de implementación).
+         10.0.2.2 = loopback del host visto desde el emulador Android.
+         Dispositivo físico por USB/LAN: reemplazar por IP LAN de la máquina. -->
+    <EmbeddedResource Include="appsettings.json" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebView.Maui" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Json" />
+    <PackageReference Include="Microsoft.Maui.Controls" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\BuildIt.Shared\BuildIt.Shared.csproj" />
+    <ProjectReference Include="..\BuildIt.SharedUI\BuildIt.SharedUI.csproj" />
+  </ItemGroup>
+</Project>

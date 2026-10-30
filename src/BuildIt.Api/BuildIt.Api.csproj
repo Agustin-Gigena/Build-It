@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+  <!-- API REST + infraestructura (EF Core/OpenIddict/MySQL).
+       No es referenciada por nadie: Web y Maui la consumen por HTTP con los
+       contratos/DTOs de BuildIt.Shared. -->
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" PrivateAssets="all" />
+    <!-- OpenAPI built-in de .NET 10: en 10.x va por paquete (no viene en el shared framework) -->
+    <PackageReference Include="Microsoft.AspNetCore.OpenApi" />
+    <!-- Health check de BD (AddDbContextCheck) y pipeline resiliente para HTTP saliente -->
+    <PackageReference Include="Microsoft.Extensions.Diagnostics.HealthChecks.EntityFrameworkCore" />
+    <PackageReference Include="Microsoft.Extensions.Http.Resilience" />
+    <PackageReference Include="MySql.EntityFrameworkCore" />
+    <PackageReference Include="OpenIddict.AspNetCore" />
+    <PackageReference Include="OpenIddict.EntityFrameworkCore" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\BuildIt.Shared\BuildIt.Shared.csproj" />
+  </ItemGroup>
+</Project>

@@ -1,0 +1,91 @@
+name: ci
+
+on:
+  pull_request:
+    branches: [production]
+  push:
+    branches: [production]
+
+env:
+  DOTNET_NOLOGO: true
+  DOTNET_CLI_TELEMETRY_OPTOUT: true
+
+jobs:
+  build-test:
+    # Puerta de toda PR: build con TreatWarningsAsErrors + tests + cobertura
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          global-json-file: global.json
+
+      - uses: actions/cache@v4
+        with:
+          path: ~/.nuget/packages
+          key: nuget-${{ runner.os }}-${{ hashFiles('Directory.Packages.props', 'src/**/*.csproj', 'tests/**/*.csproj') }}
+          restore-keys: nuget-${{ runner.os }}-
+
+      - name: Build (restaura por proyecto: el SDK solo acepta un proyecto por invocación)
+        run: |
+          for p in \
+            src/BuildIt.Shared \
+            src/BuildIt.SharedUI \
+            src/BuildIt.Api \
+            src/BuildIt.Web \
+            tests/BuildIt.Shared.Tests \
+            tests/BuildIt.Api.Tests \
+            tests/BuildIt.SharedUI.Tests \
+            tests/BuildIt.Web.Tests; do
+            dotnet build "$p"
+          done
+
+      - name: Formato (BuildIt.slnf excluye Maui: requiere workload)
+        run: dotnet format BuildIt.slnf --verify-no-changes --no-restore
+
+      - name: Test + cobertura
+        run: |
+          for t in \
+            tests/BuildIt.Shared.Tests \
+            tests/BuildIt.Api.Tests \
+            tests/BuildIt.SharedUI.Tests \
+            tests/BuildIt.Web.Tests; do
+            dotnet test "$t" \
+              --settings tests/coverlet.runsettings \
+              --collect:"XPlat Code Coverage" \
+              --results-directory ./test-results
+          done
+
+      - name: Publicar cobertura
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cobertura
+          path: ./test-results/**/coverage.cobertura.xml
+
+  maui-android:
+    # Solo en push a production: build de Android requiere workload (costoso para cada PR)
+    if: github.event_name == 'push'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          global-json-file: global.json
+
+      - uses: actions/cache@v4
+        with:
+          path: ~/.nuget/packages
+          key: nuget-${{ runner.os }}-${{ hashFiles('Directory.Packages.props', 'src/**/*.csproj') }}
+          restore-keys: nuget-${{ runner.os }}-
+
+      - name: Instalar workload MAUI (Android)
+        run: dotnet workload install maui-android
+
+      - name: Build Android
+        # -p:AndroidOnly=true: recorta los TFMs del csproj a android (en .NET 10 no hay
+        # workloads ios/maccatalyst para Linux y el restore los exigiría). A diferencia
+        # de -p:TargetFrameworks, no filtra como global property a los ProjectReferences.
+        run: dotnet build src/BuildIt.Maui -f net10.0-android -p:AndroidOnly=true -c Release

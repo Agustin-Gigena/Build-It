@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk.Razor">
+  <!-- RCL compartida por BuildIt.Web y BuildIt.Maui.
+       Los assets de wwwroot/ se exponen por defecto bajo _content/BuildIt.SharedUI/. -->
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+  </PropertyGroup>
+  <ItemGroup>
+    <SupportedPlatform Include="browser" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\BuildIt.Shared\BuildIt.Shared.csproj" />
+  </ItemGroup>
+</Project>
