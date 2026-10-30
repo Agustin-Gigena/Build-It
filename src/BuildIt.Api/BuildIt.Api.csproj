@@ -7,6 +7,8 @@
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" PrivateAssets="all" />
+    <!-- OpenAPI built-in de .NET 10: en 10.x va por paquete (no viene en el shared framework) -->
+    <PackageReference Include="Microsoft.AspNetCore.OpenApi" />
     <!-- Health check de BD (AddDbContextCheck) y pipeline resiliente para HTTP saliente -->
     <PackageReference Include="Microsoft.Extensions.Diagnostics.HealthChecks.EntityFrameworkCore" />
     <PackageReference Include="Microsoft.Extensions.Http.Resilience" />

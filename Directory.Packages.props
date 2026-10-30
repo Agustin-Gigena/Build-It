@@ -13,9 +13,11 @@
     <PackageVersion Include="OpenIddict.EntityFrameworkCore" Version="7.7.2" />
     <!-- MAUI Blazor Hybrid -->
     <PackageVersion Include="Microsoft.AspNetCore.Components.WebView.Maui" Version="10.0.120" />
+    <PackageVersion Include="Microsoft.Extensions.Configuration.Json" Version="10.0.14" />
     <PackageVersion Include="Microsoft.Maui.Controls" Version="10.0.120" />
     <PackageVersion Include="Microsoft.Maui.Extensions" Version="10.0.120" />
     <!-- Resiliencia (Polly v8 empaquetado) y health checks -->
+    <PackageVersion Include="Microsoft.AspNetCore.OpenApi" Version="10.0.14" />
     <PackageVersion Include="Microsoft.Extensions.Http.Resilience" Version="10.11.0" />
     <PackageVersion Include="Microsoft.Extensions.Diagnostics.HealthChecks.EntityFrameworkCore" Version="10.0.14" />
     <!-- Tests: xUnit v2 = stack 100% VSTest (coverlet/runsettings/filtros funcionan).
@@ -30,7 +32,7 @@
     <!-- Pin de transitivos de MySql.Data con CVEs conocidos (NU1903) en 10.0.11 -->
     <PackageVersion Include="System.Security.Cryptography.Pkcs" Version="10.0.14" />
     <PackageVersion Include="System.Security.Cryptography.Xml" Version="10.0.14" />
-    <!-- Tests de componentes Blazor (compatible con xUnit v3) -->
+    <!-- Tests de componentes Blazor (compatible con xUnit v2) -->
     <PackageVersion Include="bunit" Version="2.13.3" />
   </ItemGroup>
 </Project>

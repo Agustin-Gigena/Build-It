@@ -22,6 +22,12 @@ gitGraph
 
 ## Puertas de calidad (CI: `.github/workflows/ci.yml`)
 
+> **API (decisión)**: controladores MVC, no minimal APIs → `src/BuildIt.Api/Controllers/`.
+> Surface actual: `GET /api/status` · `GET /health/live` · `GET /openapi/v1.json`.
+> **MAUI**: `MauiProgram` lee el `appsettings.json` embebido y registra el HttpClient
+> `Api` (BaseAddress `Api:BaseUrl`, 10.0.2.2 en emulador) con `AddStandardResilienceHandler()`;
+> `Home.razor` (shell mínimo del proyecto Maui) consume `GET /api/status`.
+
 1. Build con `TreatWarningsAsErrors` (global, `Directory.Build.props`).
 2. `dotnet test` de los 4 proyectos de test con cobertura (`tests/coverlet.runsettings`).
 3. `dotnet format --verify-no-changes` sobre `BuildIt.slnf` (solución sin Maui) en CI. Hooks lefthook: solo testeo unit mínimo en pre-push (instantáneo).
@@ -54,6 +60,9 @@ lefthook install                      # activa los hooks (ya ejecutado en este r
 Notas de modo MAUI:
 - El `appsettings.json` de `BuildIt.Maui` apunta a `http://10.0.2.2:8080` (loopback del host visto por el emulador Android). Dispositivo físico por USB/LAN: reemplazar por la IP LAN (vía `usbipd-win` en WSL2 + `adb`).
 - Requiere workload `maui-android` y emulador activo o dispositivo conectado (`adb devices`).
+  ⚠️ El workload vive en la capa de imagen del contenedor: tras un rebuild del devcontainer
+  hay que reinstalarlo (`sudo dotnet workload install maui-android`). Considerar hornearlo
+  en el Dockerfile/feature para eliminar el paso manual.
 - **Debug con breakpoints de la app MAUI en Android**: requiere C# Dev Kit (tipo `dotnet` en launch.json) + extensión .NET MAUI. Sin Dev Kit, el modo soportado es la task `run: maui (android)` (deploy + launch sin debugger). Los configs de Api/Web usan `coreclr` (C# extension): no leen `launchSettings.json`, por eso fijan `ASPNETCORE_URLS` explícito.
 
 ## Matriz de tests
