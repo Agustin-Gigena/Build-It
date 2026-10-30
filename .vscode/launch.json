@@ -3,29 +3,30 @@
   "configurations": [
     {
       "name": "Api",
-      "type": "dotnet",
+      "type": "coreclr",
       "request": "launch",
-      "projectPath": "${workspaceFolder}/src/BuildIt.Api/BuildIt.Api.csproj",
-      "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development"
+      "preLaunchTask": "build: api",
+      "program": "${workspaceFolder}/src/BuildIt.Api/bin/Debug/net10.0/BuildIt.Api.dll",
+      "cwd": "${workspaceFolder}/src/BuildIt.Api",
+      "env": {
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "ASPNETCORE_URLS": "http://localhost:8080"
       }
     },
     {
       "name": "Web",
-      "type": "dotnet",
+      "type": "coreclr",
       "request": "launch",
-      "projectPath": "${workspaceFolder}/src/BuildIt.Web/BuildIt.Web.csproj",
-      "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development"
-      }
-    },
-    {
-      "name": "Maui (Android)",
-      "type": "dotnet",
-      "request": "launch",
-      "projectPath": "${workspaceFolder}/src/BuildIt.Maui/BuildIt.Maui.csproj",
-      "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development"
+      "preLaunchTask": "build: web",
+      "program": "${workspaceFolder}/src/BuildIt.Web/bin/Debug/net10.0/BuildIt.Web.dll",
+      "cwd": "${workspaceFolder}/src/BuildIt.Web",
+      "env": {
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "ASPNETCORE_URLS": "http://localhost:5000"
+      },
+      "serverReadyAction": {
+        "action": "openExternally",
+        "pattern": "\\bNow listening on:\\s+(https?://\\S+)"
       }
     }
   ],
@@ -33,11 +34,6 @@
     {
       "name": "▶ API + WEB",
       "configurations": ["Api", "Web"],
-      "stopAll": true
-    },
-    {
-      "name": "▶ API + MAUI (Android)",
-      "configurations": ["Api", "Maui (Android)"],
       "stopAll": true
     }
   ]

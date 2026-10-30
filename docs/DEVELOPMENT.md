@@ -40,15 +40,15 @@ lefthook install                      # activa los hooks (ya ejecutado en este r
 
 ## Ejecución local (VS Code: `.vscode/tasks.json` + `launch.json`)
 
-| Modo | Sin debugger (tasks) | Con debugger (F5 → compound) | URLs |
+| Modo | Sin debugger (tasks) | Con debugger (F5) | URLs |
 |---|---|---|---|
-| **API + WEB** | task `🔁 MODO: API + WEB (watch)` (dotnet watch x2) | compound `▶ API + WEB` | Api http://localhost:8080 · Web http://localhost:5000 |
-| **API + MAUI** | task `🔁 MODO: API + MAUI (watch)` | compound `▶ API + MAUI (Android)` | Api http://localhost:8080 · app en emulador/dispositivo |
+| **API + WEB** | task `🔁 MODO: API + WEB (watch)` (dotnet watch x2) | compound `▶ API + WEB` (`coreclr`, build previo incluido) | Api http://localhost:8080 · Web http://localhost:5000 |
+| **API + MAUI** | task `🔁 MODO: API + MAUI (watch)` (Api en watch + deploy Android) | Api: F5 config `Api` · app: task `run: maui (android)` | Api http://localhost:8080 · app en emulador/dispositivo |
 
 Notas de modo MAUI:
 - El `appsettings.json` de `BuildIt.Maui` apunta a `http://10.0.2.2:8080` (loopback del host visto por el emulador Android). Dispositivo físico por USB/LAN: reemplazar por la IP LAN (vía `usbipd-win` en WSL2 + `adb`).
 - Requiere workload `maui-android` y emulador activo o dispositivo conectado (`adb devices`).
-- Debug Android con C# Dev Kit + extensión .NET MAUI (ya en el devcontainer).
+- **Debug con breakpoints de la app MAUI en Android**: requiere C# Dev Kit (tipo `dotnet` en launch.json) + extensión .NET MAUI. Sin Dev Kit, el modo soportado es la task `run: maui (android)` (deploy + launch sin debugger). Los configs de Api/Web usan `coreclr` (C# extension): no leen `launchSettings.json`, por eso fijan `ASPNETCORE_URLS` explícito.
 
 ## Matriz de tests
 
