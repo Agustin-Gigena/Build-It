@@ -34,7 +34,6 @@
     <PackageReference Include="Microsoft.AspNetCore.Components.WebView.Maui" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" />
     <PackageReference Include="Microsoft.Maui.Controls" />
-    <PackageReference Include="Microsoft.Maui.Extensions" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\BuildIt.Shared\BuildIt.Shared.csproj" />

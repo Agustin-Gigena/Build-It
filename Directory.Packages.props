@@ -11,11 +11,12 @@
     <!-- OAuth2/OIDC: OpenIddict 7.7.2 (TFM net10.0, requiere EF Core Relational >= 10.0.11) -->
     <PackageVersion Include="OpenIddict.AspNetCore" Version="7.7.2" />
     <PackageVersion Include="OpenIddict.EntityFrameworkCore" Version="7.7.2" />
-    <!-- MAUI Blazor Hybrid -->
+    <!-- MAUI Blazor Hybrid
+         (Microsoft.Maui.Extensions dejó de publicarse en 6.x: sus Extensiones
+         llegan transitoriamente con Microsoft.Maui.Controls) -->
     <PackageVersion Include="Microsoft.AspNetCore.Components.WebView.Maui" Version="10.0.120" />
     <PackageVersion Include="Microsoft.Extensions.Configuration.Json" Version="10.0.14" />
     <PackageVersion Include="Microsoft.Maui.Controls" Version="10.0.120" />
-    <PackageVersion Include="Microsoft.Maui.Extensions" Version="10.0.120" />
     <!-- Resiliencia (Polly v8 empaquetado) y health checks -->
     <PackageVersion Include="Microsoft.AspNetCore.OpenApi" Version="10.0.14" />
     <PackageVersion Include="Microsoft.Extensions.Http.Resilience" Version="10.11.0" />
