@@ -29,4 +29,8 @@ RUN set -eu; \
     elif [ -z "${gid_group}" ]; then \
         groupadd --gid "${LOCAL_GID}" "${LOCAL_GROUP}"; \
     fi; \
-    useradd --uid "${LOCAL_UID}" --gid "${LOCAL_GID}" --create-home --shell /bin/bash "${LOCAL_USER}"
+    useradd --uid "${LOCAL_UID}" --gid "${LOCAL_GID}" --create-home --shell /bin/bash "${LOCAL_USER}"; \
+    # .nuget pre-creado con ownership del usuario: el volumen nombrado
+    # `nuget-packages` (compose.json) se seedea con copy-up desde la imagen y
+    # preserva el ownership; sin esto queda root:root y el usuario no puede escribir.
+    install -d -o "${LOCAL_USER}" -g "${LOCAL_GROUP}" "/home/${LOCAL_USER}/.nuget"

@@ -10,6 +10,8 @@
 # se marca con error a la vista (decisión deliberada: sin `|| true` que oculte).
 #
 # Pasos:
+#   0. chown de ~/.nuget — el volumen `nuget-packages` puede haberse seedeado
+#      root:root en contenedores creados antes del arreglo del Dockerfile.
 #   1. git safe.directory — el bind mount del repo es del uid del host; sin esto
 #      git lo rechaza por "dubious ownership".
 #   2. gh auth setup-git — git usa gh como credential helper para push/pull
@@ -31,6 +33,13 @@ set -euo pipefail
 cd "$(git rev-parse --show-toplevel)"
 
 paso() { echo "==> $1"; }
+
+paso "dotnet: corrigiendo ownership de ~/.nuget (volumen seedeado por root)"
+# Volúmenes ya seedeados antes del arreglo del Dockerfile quedaron root:root.
+# Si hay algo de root adentro, se recupera el ownership del usuario (sudo sin password).
+if sudo find "$HOME/.nuget" -user root -print -quit 2>/dev/null | grep -q .; then
+    sudo chown -R "$(id -u):$(id -g)" "$HOME/.nuget"
+fi
 
 paso "git: marcando /Build_it como directorio seguro"
 git config --global --add safe.directory /Build_it
