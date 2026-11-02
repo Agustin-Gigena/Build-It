@@ -37,6 +37,7 @@ jobs:
       - uses: ./.github/actions/deploy-web
         with:
           environment: ${{ inputs.environment }}
+          cloudflare_token: ${{ secrets.CLOUDFLARE_API_TOKEN }}
 
   deploy-api:
     if: ${{ inputs.run_api }}
@@ -48,6 +49,9 @@ jobs:
         with:
           environment: ${{ inputs.environment }}
           image_tag: ${{ github.run_id }}
+          aws_role_arn: ${{ secrets.AWS_IAM_ROLE_ARN }}
+          aws_region: ${{ secrets.AWS_REGION }}
+          aws_ecr_registry: ${{ secrets.AWS_ECR_REGISTRY }}
 
   deploy-maui:
     if: ${{ inputs.run_maui }}

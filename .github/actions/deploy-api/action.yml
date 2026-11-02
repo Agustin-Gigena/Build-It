@@ -8,39 +8,48 @@ inputs:
     required: false
     description: Tag de la imagen
     default: latest
+  aws_role_arn:
+    required: true
+    description: ARN del rol de IAM para OIDC
+  aws_region:
+    required: true
+    description: Región de AWS
+  aws_ecr_registry:
+    required: true
+    description: URL del registry ECR
 runs:
   using: composite
   steps:
     - name: Configure AWS credentials (OIDC)
       uses: aws-actions/configure-aws-credentials@v4
       with:
-        role-to-assume: ${{ secrets.AWS_IAM_ROLE_ARN }}
-        aws-region: ${{ secrets.AWS_REGION }}
+        role-to-assume: ${{ inputs.aws_role_arn }}
+        aws-region: ${{ inputs.aws_region }}
     - name: Login to Amazon ECR
       uses: aws-actions/amazon-ecr-login@v2
     - name: Build and push Docker image
       run: |
         docker build \
           -f src/BuildIt.Api/Dockerfile \
-          -t ${{ secrets.AWS_ECR_REGISTRY }}/buildit-api:${{ inputs.image_tag }} \
-          -t ${{ secrets.AWS_ECR_REGISTRY }}/buildit-api:latest \
+          -t ${{ inputs.aws_ecr_registry }}/buildit-api:${{ inputs.image_tag }} \
+          -t ${{ inputs.aws_ecr_registry }}/buildit-api:latest \
           .
-        docker push ${{ secrets.AWS_ECR_REGISTRY }}/buildit-api:${{ inputs.image_tag }}
-        docker push ${{ secrets.AWS_ECR_REGISTRY }}/buildit-api:latest
+        docker push ${{ inputs.aws_ecr_registry }}/buildit-api:${{ inputs.image_tag }}
+        docker push ${{ inputs.aws_ecr_registry }}/buildit-api:latest
       shell: bash
     - name: Update Lambda function code (QA)
       if: ${{ inputs.environment == 'QA' }}
       run: |
         aws lambda update-function-code \
           --function-name buildit-api-qa \
-          --image-uri ${{ secrets.AWS_ECR_REGISTRY }}/buildit-api:${{ inputs.image_tag }} \
-          --region ${{ secrets.AWS_REGION }}
+          --image-uri ${{ inputs.aws_ecr_registry }}/buildit-api:${{ inputs.image_tag }} \
+          --region ${{ inputs.aws_region }}
       shell: bash
     - name: Update Lambda function code (Prod)
       if: ${{ inputs.environment == 'Prod' }}
       run: |
         aws lambda update-function-code \
           --function-name buildit-api-prod \
-          --image-uri ${{ secrets.AWS_ECR_REGISTRY }}/buildit-api:${{ inputs.image_tag }} \
-          --region ${{ secrets.AWS_REGION }}
+          --image-uri ${{ inputs.aws_ecr_registry }}/buildit-api:${{ inputs.image_tag }} \
+          --region ${{ inputs.aws_region }}
       shell: bash

@@ -4,6 +4,9 @@ inputs:
   environment:
     required: true
     description: Entorno de destino (QA o Prod)
+  cloudflare_token:
+    required: true
+    description: Cloudflare API token
 outputs:
   project:
     description: Nombre del proyecto de Cloudflare Pages
@@ -17,11 +20,11 @@ runs:
       if: ${{ inputs.environment == 'QA' }}
       uses: cloudflare/wrangler-action@v3
       with:
-        apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+        apiToken: ${{ inputs.cloudflare_token }}
         command: pages deploy dist/wwwroot --project-name buildit-qa
     - name: Deploy to Cloudflare Pages (Prod)
       if: ${{ inputs.environment == 'Prod' }}
       uses: cloudflare/wrangler-action@v3
       with:
-        apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+        apiToken: ${{ inputs.cloudflare_token }}
         command: pages deploy dist/wwwroot --project-name buildit-prod
