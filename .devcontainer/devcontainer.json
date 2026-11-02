@@ -35,10 +35,11 @@
         "ms-dotnettools.csdevkit",
         "ms-dotnettools.csharp",
         "editorconfig.editorconfig",
-        "AmazonWebServices.aws-toolkit-vscode"
+        "AmazonWebServices.aws-toolkit-vscode",
+        "ms-dotnettools.dotnet-maui"
       ]
     }
   },
-  "forwardPorts": [8080, 8081],
+  "forwardPorts": [8080, 5000],
   "postCreateCommand": ".devcontainer/scripts/setup.sh"
 }

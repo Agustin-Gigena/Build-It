@@ -1,0 +1,10 @@
+<Project>
+  <PropertyGroup>
+    <!-- Convención común del monorepo. Cada csproj declara su TargetFramework
+         (BuildIt.Maui usa multi-targeting por plataforma). -->
+    <LangVersion>latest</LangVersion>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+  </PropertyGroup>
+</Project>

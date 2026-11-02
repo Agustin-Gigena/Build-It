@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RunSettings>
+  <DataCollectionRunSettings>
+    <DataCollectors>
+      <DataCollector friendlyName="XPlat code coverage">
+        <Configuration>
+          <Format>cobertura</Format>
+          <!-- Excluye los propios ensamblados de test de la medición -->
+          <Exclude>[*Tests*]*</Exclude>
+          <!-- Puerta de cobertura: habilitar (60% líneas) al mergear los primeros tests reales.
+               Mientras el proyecto esté vacío, un umbral activo rompería el pipeline.
+          <Threshold>60</Threshold>
+          <ThresholdType>line</ThresholdType>
+          <ThresholdStat>total</ThresholdStat>
+          -->
+        </Configuration>
+      </DataCollector>
+    </DataCollectors>
+  </DataCollectionRunSettings>
+</RunSettings>

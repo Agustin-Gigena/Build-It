@@ -1,0 +1,39 @@
+<Project>
+  <PropertyGroup>
+    <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+    <!-- Fija versiones de transitivos: obliga a pinnear aquí los CVEs -->
+    <CentralPackageTransitivePinningEnabled>true</CentralPackageTransitivePinningEnabled>
+  </PropertyGroup>
+  <ItemGroup>
+    <!-- Datos (BuildIt.Api): EF Core 10 + proveedor MySQL oficial (único GA compatible con EF 10; Pomelo sigue en 9.x) -->
+    <PackageVersion Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.14" />
+    <PackageVersion Include="MySql.EntityFrameworkCore" Version="10.0.12" />
+    <!-- OAuth2/OIDC: OpenIddict 7.7.2 (TFM net10.0, requiere EF Core Relational >= 10.0.11) -->
+    <PackageVersion Include="OpenIddict.AspNetCore" Version="7.7.2" />
+    <PackageVersion Include="OpenIddict.EntityFrameworkCore" Version="7.7.2" />
+    <!-- MAUI Blazor Hybrid
+         (Microsoft.Maui.Extensions dejó de publicarse en 6.x: sus Extensiones
+         llegan transitoriamente con Microsoft.Maui.Controls) -->
+    <PackageVersion Include="Microsoft.AspNetCore.Components.WebView.Maui" Version="10.0.120" />
+    <PackageVersion Include="Microsoft.Extensions.Configuration.Json" Version="10.0.14" />
+    <PackageVersion Include="Microsoft.Maui.Controls" Version="10.0.120" />
+    <!-- Resiliencia (Polly v8 empaquetado) y health checks -->
+    <PackageVersion Include="Microsoft.AspNetCore.OpenApi" Version="10.0.14" />
+    <PackageVersion Include="Microsoft.Extensions.Http.Resilience" Version="10.11.0" />
+    <PackageVersion Include="Microsoft.Extensions.Diagnostics.HealthChecks.EntityFrameworkCore" Version="10.0.14" />
+    <!-- Tests: xUnit v2 = stack 100% VSTest (coverlet/runsettings/filtros funcionan).
+         xunit.v3 arrastra Microsoft.Testing.Platform y bloquea `dotnet test` en modo
+         VSTest con SDK 10; migrar a v3 implica migrar cobertura a MTP también. -->
+    <PackageVersion Include="coverlet.collector" Version="10.1.0" />
+    <PackageVersion Include="Microsoft.AspNetCore.Mvc.Testing" Version="10.0.14" />
+    <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.14.1" />
+    <PackageVersion Include="Testcontainers.MySql" Version="4.16.0" />
+    <PackageVersion Include="xunit" Version="2.9.3" />
+    <PackageVersion Include="xunit.runner.visualstudio" Version="2.8.2" />
+    <!-- Pin de transitivos de MySql.Data con CVEs conocidos (NU1903) en 10.0.11 -->
+    <PackageVersion Include="System.Security.Cryptography.Pkcs" Version="10.0.14" />
+    <PackageVersion Include="System.Security.Cryptography.Xml" Version="10.0.14" />
+    <!-- Tests de componentes Blazor (compatible con xUnit v2) -->
+    <PackageVersion Include="bunit" Version="2.13.3" />
+  </ItemGroup>
+</Project>

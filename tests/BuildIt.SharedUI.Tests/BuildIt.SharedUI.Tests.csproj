@@ -1,0 +1,19 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- Tests de la RCL: componentes .razor (bUnit) + ViewModels.
+       Esta es la superficie testeable de BuildIt.Maui: el proyecto Maui no es
+       referenciable (TFMs android/ios/maccatalyst) y consume esta misma lógica. -->
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="bunit" />
+    <PackageReference Include="coverlet.collector" PrivateAssets="all" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" PrivateAssets="all" />
+    <PackageReference Include="xunit" />
+    <PackageReference Include="xunit.runner.visualstudio" PrivateAssets="all" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\BuildIt.SharedUI\BuildIt.SharedUI.csproj" />
+  </ItemGroup>
+</Project>
