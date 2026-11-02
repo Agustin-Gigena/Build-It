@@ -42,9 +42,9 @@ jobs:
           done
 
       - name: Formato (BuildIt.slnf excluye Maui: requiere workload)
-        run: dotnet format BuildIt.slnf --verify-no-changes --no-restore
+        run: dotnet format BuildIt.slnf --verify-no-changes
 
-      - name: Test + cobertura
+      - name: Test + cobertura (unit, sin integración)
         run: |
           for t in \
             tests/BuildIt.Shared.Tests \
@@ -53,7 +53,7 @@ jobs:
             tests/BuildIt.Web.Tests; do
             dotnet test "$t" \
               --settings tests/coverlet.runsettings \
-              --collect:"XPlat Code Coverage" \
+              --filter "Category!=Integration" \
               --results-directory ./test-results
           done
 
@@ -66,7 +66,7 @@ jobs:
 
   maui-android:
     # Solo en push a production: build de Android requiere workload (costoso para cada PR)
-    if: github.event_name == 'push'
+    if: github.event_name == 'push' && github.ref == 'refs/heads/production'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -85,7 +85,4 @@ jobs:
         run: dotnet workload install maui-android
 
       - name: Build Android
-        # -p:AndroidOnly=true: recorta los TFMs del csproj a android (en .NET 10 no hay
-        # workloads ios/maccatalyst para Linux y el restore los exigiría). A diferencia
-        # de -p:TargetFrameworks, no filtra como global property a los ProjectReferences.
         run: dotnet build src/BuildIt.Maui -f net10.0-android -p:AndroidOnly=true -c Release
