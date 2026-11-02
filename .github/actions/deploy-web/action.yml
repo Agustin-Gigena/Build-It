@@ -1,0 +1,27 @@
+name: Deploy Web
+description: Construye y despliega el frontend Blazor WebAssembly a Cloudflare Pages
+inputs:
+  environment:
+    required: true
+    description: Entorno de destino (QA o Prod)
+outputs:
+  project:
+    description: Nombre del proyecto de Cloudflare Pages
+runs:
+  using: composite
+  steps:
+    - name: Build Blazor WebAssembly (Release)
+      run: dotnet publish src/BuildIt.Web/BuildIt.Web.csproj -c Release -o ./dist/wwwroot
+      shell: bash
+    - name: Deploy to Cloudflare Pages (QA)
+      if: ${{ inputs.environment == 'QA' }}
+      uses: cloudflare/wrangler-action@v3
+      with:
+        apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+        command: pages deploy dist/wwwroot --project-name buildit-qa
+    - name: Deploy to Cloudflare Pages (Prod)
+      if: ${{ inputs.environment == 'Prod' }}
+      uses: cloudflare/wrangler-action@v3
+      with:
+        apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+        command: pages deploy dist/wwwroot --project-name buildit-prod

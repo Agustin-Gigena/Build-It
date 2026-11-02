@@ -1,0 +1,26 @@
+name: Deploy MAUI
+description: Construye el APK de Android de la app MAUI y lo sube como artifact
+inputs:
+  environment:
+    required: true
+    description: Entorno de destino (QA o Prod)
+runs:
+  using: composite
+  steps:
+    - name: Instalar workload MAUI (Android)
+      run: dotnet workload install maui-android
+      shell: bash
+    - name: Build Android APK (Release)
+      run: |
+        dotnet build src/BuildIt.Maui/BuildIt.Maui.csproj \
+          -f net10.0-android \
+          -p:AndroidOnly=true \
+          -c Release
+      shell: bash
+    - name: Subir APK como artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: buildit-maui-apk-${{ inputs.environment }}
+        path: |
+          src/BuildIt.Maui/bin/Release/net10.0-android/**/*.apk
+        retention-days: 30

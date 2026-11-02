@@ -1,0 +1,46 @@
+name: Deploy API
+description: Construye imagen Docker de la API, la pushea a ECR y actualiza la función Lambda
+inputs:
+  environment:
+    required: true
+    description: Entorno de destino (QA o Prod)
+  image_tag:
+    required: false
+    description: Tag de la imagen
+    default: latest
+runs:
+  using: composite
+  steps:
+    - name: Configure AWS credentials (OIDC)
+      uses: aws-actions/configure-aws-credentials@v4
+      with:
+        role-to-assume: ${{ secrets.AWS_IAM_ROLE_ARN }}
+        aws-region: ${{ secrets.AWS_REGION }}
+    - name: Login to Amazon ECR
+      uses: aws-actions/amazon-ecr-login@v2
+    - name: Build and push Docker image
+      run: |
+        docker build \
+          -f src/BuildIt.Api/Dockerfile \
+          -t ${{ secrets.AWS_ECR_REGISTRY }}/buildit-api:${{ inputs.image_tag }} \
+          -t ${{ secrets.AWS_ECR_REGISTRY }}/buildit-api:latest \
+          .
+        docker push ${{ secrets.AWS_ECR_REGISTRY }}/buildit-api:${{ inputs.image_tag }}
+        docker push ${{ secrets.AWS_ECR_REGISTRY }}/buildit-api:latest
+      shell: bash
+    - name: Update Lambda function code (QA)
+      if: ${{ inputs.environment == 'QA' }}
+      run: |
+        aws lambda update-function-code \
+          --function-name buildit-api-qa \
+          --image-uri ${{ secrets.AWS_ECR_REGISTRY }}/buildit-api:${{ inputs.image_tag }} \
+          --region ${{ secrets.AWS_REGION }}
+      shell: bash
+    - name: Update Lambda function code (Prod)
+      if: ${{ inputs.environment == 'Prod' }}
+      run: |
+        aws lambda update-function-code \
+          --function-name buildit-api-prod \
+          --image-uri ${{ secrets.AWS_ECR_REGISTRY }}/buildit-api:${{ inputs.image_tag }} \
+          --region ${{ secrets.AWS_REGION }}
+      shell: bash
