@@ -2,10 +2,10 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="BuildIt.Maui.MainPage"
              xmlns:b="clr-namespace:Microsoft.AspNetCore.Components.WebView.Maui;assembly=Microsoft.AspNetCore.Components.WebView.Maui"
-             xmlns:pages="clr-namespace:BuildIt.Maui.Components.Pages">
+             xmlns:sharedUI="clr-namespace:BuildIt.SharedUI;assembly=BuildIt.SharedUI">
     <b:BlazorWebView x:Name="Blazor" HostPage="wwwroot/index.html">
         <b:BlazorWebView.RootComponents>
-            <b:RootComponent Selector="#app" ComponentType="{x:Type pages:Home}" />
+            <b:RootComponent Selector="#app" ComponentType="{x:Type sharedUI:App}" />
         </b:BlazorWebView.RootComponents>
     </b:BlazorWebView>
 </ContentPage>

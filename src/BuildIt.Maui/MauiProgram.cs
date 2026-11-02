@@ -22,6 +22,10 @@ public static class MauiProgram
         builder.Services.AddBlazorWebViewDeveloperTools();
 #endif
 
+        // Razor Components para alojar la RCL compartida (BuildIt.SharedUI)
+        builder.Services.AddRazorComponents()
+            .AddInteractiveServerRenderMode();
+
         builder.Services.AddSingleton<IConfiguration>(config);
 
         // HttpClient hacia la Api con pipeline resiliente (retry/circuit breaker/timeout)

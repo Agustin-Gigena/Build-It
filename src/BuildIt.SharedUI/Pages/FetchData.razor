@@ -1,0 +1,57 @@
+@page "/fetchdata"
+@using System.Net.Http
+@using System.Net.Http.Json
+@inject HttpClient Http
+
+<PageTitle>Estado de la API</PageTitle>
+
+<h1>Estado de la API</h1>
+
+<p>Este componente consulta la API a trav\u00e9s de HTTP.</p>
+
+@if (status is null)
+{
+    <p><em>Cargando...</em></p>
+}
+else if (error is not null)
+{
+    <p class="text-danger">Error: @error</p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>App</th>
+                <th>Entorno</th>
+                <th>Hora del servidor (UTC)</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>@status.App</td>
+                <td>@status.Environment</td>
+                <td>@status.ServerTimeUtc.ToString("u")</td>
+            </tr>
+        </tbody>
+    </table>
+}
+
+@code {
+    private StatusResponse? status;
+    private string? error;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            status = await Http.GetFromJsonAsync<StatusResponse>("api/status");
+        }
+        catch (Exception ex)
+        {
+            error = ex.Message;
+        }
+    }
+
+    private sealed record StatusResponse(string App, string Environment, DateTimeOffset ServerTimeUtc);
+}

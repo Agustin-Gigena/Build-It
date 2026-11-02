@@ -1,0 +1,67 @@
+name: Deploy API (Lambda container)
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: Entorno de destino
+        required: true
+        type: choice
+        options:
+          - QA
+          - Prod
+        default: QA
+      image_tag:
+        description: Tag de la imagen (ej: latest, v1.0.0)
+        required: true
+        type: string
+        default: latest
+
+env:
+  REGISTRY: ${{ secrets.AWS_ECR_REGISTRY }}
+  REPOSITORY: buildit-api
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    environment: ${{ github.event.inputs.environment }}
+    permissions:
+      id-token: write   # para OIDC con AWS
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Configure AWS credentials (OIDC)
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_IAM_ROLE_ARN }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: Login to Amazon ECR
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Build and push Docker image
+        run: |
+          docker build \
+            -f src/BuildIt.Api/Dockerfile \
+            -t ${{ env.REGISTRY }}/${{ env.REPOSITORY }}:${{ github.event.inputs.image_tag }} \
+            -t ${{ env.REGISTRY }}/${{ env.REPOSITORY }}:latest \
+            .
+          docker push ${{ env.REGISTRY }}/${{ env.REPOSITORY }}:${{ github.event.inputs.image_tag }}
+          docker push ${{ env.REGISTRY }}/${{ env.REPOSITORY }}:latest
+
+      - name: Update Lambda function code (QA)
+        if: github.event.inputs.environment == 'QA'
+        run: |
+          aws lambda update-function-code \
+            --function-name buildit-api-qa \
+            --image-uri ${{ env.REGISTRY }}/${{ env.REPOSITORY }}:${{ github.event.inputs.image_tag }} \
+            --region ${{ secrets.AWS_REGION }}
+
+      - name: Update Lambda function code (Prod)
+        if: github.event.inputs.environment == 'Prod'
+        run: |
+          aws lambda update-function-code \
+            --function-name buildit-api-prod \
+            --image-uri ${{ env.REGISTRY }}/${{ env.REPOSITORY }}:${{ github.event.inputs.image_tag }} \
+            --region ${{ secrets.AWS_REGION }}

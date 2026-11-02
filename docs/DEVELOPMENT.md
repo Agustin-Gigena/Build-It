@@ -21,12 +21,18 @@ gitGraph
 ```
 
 ## Puertas de calidad (CI: `.github/workflows/ci.yml`)
-
+>
 > **API (decisión)**: controladores MVC, no minimal APIs → `src/BuildIt.Api/Controllers/`.
 > Surface actual: `GET /api/status` · `GET /health/live` · `GET /openapi/v1.json`.
+> CORS: política `BlazorWasm` permite `http://localhost:5000` (frontend WASM en dev).
+>
+> **Web (Blazor WebAssembly PWA)**: `src/BuildIt.Web` es un frontend estático (`.NET.Sdk.BlazorWebAssembly`) que aloja la RCL `BuildIt.SharedUI`. Se sirve sin servidor ASP.NET Core (CDN/S3/Pages). En dev corre en `http://localhost:5000` y llama a la Api en `:8080` (CORS requerido).
+>
 > **MAUI**: `MauiProgram` lee el `appsettings.json` embebido y registra el HttpClient
 > `Api` (BaseAddress `Api:BaseUrl`, 10.0.2.2 en emulador) con `AddStandardResilienceHandler()`;
-> `Home.razor` (shell mínimo del proyecto Maui) consume `GET /api/status`.
+> `MainPage.xaml` aloja el componente `App` de `BuildIt.SharedUI` (RCL) en el `BlazorWebView`.
+>
+> **SharedUI (RCL compartida)**: `App.razor` (router), `Pages/` (Index, Counter, FetchData), `Shared/` (MainLayout, NavMenu, SurveyPrompt), `_Imports.razor`. Referenciada por Web y Maui.
 
 1. Build con `TreatWarningsAsErrors` (global, `Directory.Build.props`).
 2. `dotnet test` de los 4 proyectos de test con cobertura (`tests/coverlet.runsettings`).

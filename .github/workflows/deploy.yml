@@ -1,1 +1,45 @@
+name: Deploy
 
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: Entorno de destino
+        required: true
+        type: choice
+        options:
+          - QA
+          - Prod
+        default: QA
+
+env:
+  DOTNET_NOLOGO: true
+  DOTNET_CLI_TELEMETRY_OPTOUT: true
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    environment: ${{ github.event.inputs.environment }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          global-json-file: global.json
+
+      - name: Build Blazor WebAssembly (Release)
+        run: dotnet publish src/BuildIt.Web/BuildIt.Web.csproj -c Release -o ./dist/wwwroot
+
+      - name: Deploy to Cloudflare Pages (QA)
+        if: github.event.inputs.environment == 'QA'
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          command: pages deploy dist/wwwroot --project-name buildit-qa
+
+      - name: Deploy to Cloudflare Pages (Prod)
+        if: github.event.inputs.environment == 'Prod'
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          command: pages deploy dist/wwwroot --project-name buildit-prod

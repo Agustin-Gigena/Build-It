@@ -1,0 +1,15 @@
+bin/
+obj/
+.git/
+.gitignore
+README.md
+Dockerfile
+.dockerignore
+launchSettings.json
+appsettings.Development.json
+tests/
+BuildIt.slnx
+BuildIt.slnf
+Directory.Build.props
+Directory.Packages.props
+global.json

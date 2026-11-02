@@ -6,6 +6,7 @@
   </PropertyGroup>
   <ItemGroup>
     <SupportedPlatform Include="browser" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.Web" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\BuildIt.Shared\BuildIt.Shared.csproj" />
