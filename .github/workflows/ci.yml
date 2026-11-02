@@ -66,7 +66,9 @@ jobs:
 
   maui-android:
     # Solo en push a production: build de Android requiere workload (costoso para cada PR)
-    if: github.event_name == 'push' && github.ref == 'refs/heads/production'
+    if: |
+      github.event_name == 'push' &&
+      github.ref == 'refs/heads/production'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
