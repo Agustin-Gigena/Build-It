@@ -2,14 +2,31 @@
 set -euo pipefail
 cd "$(git rev-parse --show-toplevel)"
 
-branch="$(git branch --show-current)"
-case "$branch" in
-  production|development|release_candidate) ;;
-  *)
-    echo "ERROR: rama no soportada para la imagen MySQL: ${branch}" >&2
-    exit 1
-    ;;
-esac
+branch=""
+nearest_distance=""
+for candidate in production development release_candidate; do
+  for ref in "refs/heads/${candidate}" "refs/remotes/origin/${candidate}"; do
+    candidate_commit="$(git rev-parse --verify --quiet "${ref}^{commit}")" || continue
+    if git merge-base --is-ancestor "$candidate_commit" HEAD; then
+      distance="$(git rev-list --count "${candidate_commit}..HEAD")"
+      if [[ -z "$nearest_distance" || "$distance" -lt "$nearest_distance" ]]; then
+        branch="$candidate"
+        nearest_distance="$distance"
+      fi
+    else
+      status=$?
+      if [[ "$status" -gt 1 ]]; then
+        echo "ERROR: no se pudo comprobar si ${candidate} es ancestro de HEAD." >&2
+        exit "$status"
+      fi
+    fi
+  done
+done
+
+if [[ -z "$branch" ]]; then
+  echo "ERROR: no se encontró un ancestro entre production, development y release_candidate." >&2
+  exit 1
+fi
 
 : "${BUILD_IT_DOCKER_SOCKET:=}"
 if [ -z "$BUILD_IT_DOCKER_SOCKET" ]; then
