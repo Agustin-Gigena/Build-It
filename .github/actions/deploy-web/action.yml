@@ -17,7 +17,7 @@ runs:
   using: composite
   steps:
     - name: Build Blazor WebAssembly (Release)
-      run: dotnet publish src/BuildIt.Web/BuildIt.Web.csproj -c Release -o ./dist/wwwroot
+      run: dotnet publish src/BuildIt.Web/BuildIt.Web.csproj -c Release -o ./dist
       shell: bash
 
     # Crea el proyecto si no existe (falla si ya existe: se ignora)
