@@ -38,6 +38,7 @@ jobs:
         with:
           environment: ${{ inputs.environment }}
           cloudflare_token: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          cloudflare_account_id: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
 
   deploy-api:
     if: ${{ inputs.run_api }}

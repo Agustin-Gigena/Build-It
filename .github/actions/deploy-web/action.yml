@@ -6,7 +6,10 @@ inputs:
     description: Entorno de destino (QA o Prod)
   cloudflare_token:
     required: true
-    description: Cloudflare API token
+    description: Cloudflare API token (permisos Account > Cloudflare Pages > Edit + User > User Details > Read)
+  cloudflare_account_id:
+    required: true
+    description: Cloudflare Account ID (evita que wrangler llame a /memberships)
 outputs:
   project:
     description: Nombre del proyecto de Cloudflare Pages
@@ -21,10 +24,12 @@ runs:
       uses: cloudflare/wrangler-action@v3
       with:
         apiToken: ${{ inputs.cloudflare_token }}
+        accountId: ${{ inputs.cloudflare_account_id }}
         command: pages deploy dist/wwwroot --project-name buildit-qa
     - name: Deploy to Cloudflare Pages (Prod)
       if: ${{ inputs.environment == 'Prod' }}
       uses: cloudflare/wrangler-action@v3
       with:
         apiToken: ${{ inputs.cloudflare_token }}
+        accountId: ${{ inputs.cloudflare_account_id }}
         command: pages deploy dist/wwwroot --project-name buildit-prod
