@@ -37,6 +37,18 @@ runs:
         wranglerVersion: "4"
         command: pages deploy dist/wwwroot --project-name buildit-qa
 
+    - name: Verificar deployment QA
+      if: ${{ inputs.environment == 'QA' }}
+      run: |
+        sleep 5
+        BASE="https://feat-arquitectura-monorepo.buildit-qa.pages.dev"
+        for p in "/" "/_framework/blazor.webassembly.js" "/manifest.json" "/counter" "/_framework/NOEXISTE.js"; do
+          ct=$(curl -sI "$BASE$p" | grep -i "^content-type" | tr -d '\r')
+          code=$(curl -s -o /dev/null -w "%{http_code}" "$BASE$p")
+          echo "[$code] $ct <- $p"
+        done
+      shell: bash
+
     # Crea el proyecto si no existe (falla si ya existe: se ignora)
     - name: Asegurar proyecto Cloudflare Pages (Prod)
       if: ${{ inputs.environment == 'Prod' }}
