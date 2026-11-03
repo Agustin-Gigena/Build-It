@@ -7,18 +7,13 @@ nearest_distance=""
 for candidate in production development release_candidate; do
   for ref in "refs/heads/${candidate}" "refs/remotes/origin/${candidate}"; do
     candidate_commit="$(git rev-parse --verify --quiet "${ref}^{commit}")" || continue
-    if git merge-base --is-ancestor "$candidate_commit" HEAD; then
-      distance="$(git rev-list --count "${candidate_commit}..HEAD")"
-      if [[ -z "$nearest_distance" || "$distance" -lt "$nearest_distance" ]]; then
-        branch="$candidate"
-        nearest_distance="$distance"
-      fi
-    else
-      status=$?
-      if [[ "$status" -gt 1 ]]; then
-        echo "ERROR: no se pudo comprobar si ${candidate} es ancestro de HEAD." >&2
-        exit "$status"
-      fi
+    # Ancestro más cercano: fork point entre HEAD y el candidato (el tip del
+    # candidato puede haber avanzado respecto de donde se bifurcó HEAD).
+    base="$(git merge-base HEAD "$candidate_commit" 2>/dev/null)" || continue
+    distance="$(git rev-list --count "${base}..HEAD")"
+    if [[ -z "$nearest_distance" || "$distance" -lt "$nearest_distance" ]]; then
+      branch="$candidate"
+      nearest_distance="$distance"
     fi
   done
 done
