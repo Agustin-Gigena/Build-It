@@ -9,10 +9,7 @@ inputs:
     description: Cloudflare API token (permisos Account > Cloudflare Pages > Edit + User > User Details > Read)
   cloudflare_account_id:
     required: true
-    description: Cloudflare Account ID (evita que wrangler llame a /memberships)
-outputs:
-  project:
-    description: Nombre del proyecto de Cloudflare Pages
+    description: Cloudflare Account ID
 runs:
   using: composite
   steps:
@@ -20,37 +17,24 @@ runs:
       run: dotnet publish src/BuildIt.Web/BuildIt.Web.csproj -c Release -o ./dist
       shell: bash
 
-    - name: Debug publish output
-      run: |
-        echo "=== dist raíz ==="; ls -la dist/ | head -20
-        echo "=== dist/wwwroot raíz (archivos) ==="; find dist/wwwroot -maxdepth 1 -type f | wc -l
-        echo "=== total archivos en dist/wwwroot ==="; find dist/wwwroot -type f | wc -l
-        echo "=== _framework presente? ==="; ls dist/wwwroot/_framework 2>/dev/null | head -10 || echo "NO EXISTE dist/wwwroot/_framework"
-      shell: bash
-
-
     # Crea el proyecto si no existe (falla si ya existe: se ignora)
     - name: Asegurar proyecto Cloudflare Pages (QA)
       if: ${{ inputs.environment == 'QA' }}
       uses: cloudflare/wrangler-action@v3
       continue-on-error: true
-      env:
-        CLOUDFLARE_API_TOKEN: ${{ inputs.cloudflare_token }}
-        CLOUDFLARE_ACCOUNT_ID: ${{ inputs.cloudflare_account_id }}
       with:
         apiToken: ${{ inputs.cloudflare_token }}
         accountId: ${{ inputs.cloudflare_account_id }}
+        wranglerVersion: "4"
         command: pages project create buildit-qa --production-branch=main
 
     - name: Deploy to Cloudflare Pages (QA)
       if: ${{ inputs.environment == 'QA' }}
       uses: cloudflare/wrangler-action@v3
-      env:
-        CLOUDFLARE_API_TOKEN: ${{ inputs.cloudflare_token }}
-        CLOUDFLARE_ACCOUNT_ID: ${{ inputs.cloudflare_account_id }}
       with:
         apiToken: ${{ inputs.cloudflare_token }}
         accountId: ${{ inputs.cloudflare_account_id }}
+        wranglerVersion: "4"
         command: pages deploy dist/wwwroot --project-name buildit-qa
 
     # Crea el proyecto si no existe (falla si ya existe: se ignora)
@@ -58,21 +42,17 @@ runs:
       if: ${{ inputs.environment == 'Prod' }}
       uses: cloudflare/wrangler-action@v3
       continue-on-error: true
-      env:
-        CLOUDFLARE_API_TOKEN: ${{ inputs.cloudflare_token }}
-        CLOUDFLARE_ACCOUNT_ID: ${{ inputs.cloudflare_account_id }}
       with:
         apiToken: ${{ inputs.cloudflare_token }}
         accountId: ${{ inputs.cloudflare_account_id }}
+        wranglerVersion: "4"
         command: pages project create buildit-prod --production-branch=main
 
     - name: Deploy to Cloudflare Pages (Prod)
       if: ${{ inputs.environment == 'Prod' }}
       uses: cloudflare/wrangler-action@v3
-      env:
-        CLOUDFLARE_API_TOKEN: ${{ inputs.cloudflare_token }}
-        CLOUDFLARE_ACCOUNT_ID: ${{ inputs.cloudflare_account_id }}
       with:
         apiToken: ${{ inputs.cloudflare_token }}
         accountId: ${{ inputs.cloudflare_account_id }}
+        wranglerVersion: "4"
         command: pages deploy dist/wwwroot --project-name buildit-prod
