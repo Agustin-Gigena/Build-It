@@ -6,13 +6,22 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <base href="/" />
     <link rel="manifest" href="manifest.json" />
+    <link rel="preload" id="webassembly" />
+    <script type="importmap"></script>
     <title>BuildIt</title>
 </head>
 
 <body>
     <div id="app">Cargando...</div>
 
-    <script src="_framework/blazor.webassembly.js"></script>
+    <div id="blazor-error-ui" data-nosnippet>
+        Ocurri&oacute; un error no manejado.
+        <a href="." class="reload">Recargar</a>
+        <span class="dismiss">&#x1f5d9;</span>
+    </div>
+    <!-- #[.{fingerprint}] lo reemplaza el SDK en publish por el hash de contenido;
+         en dev queda el path sin hash. -->
+    <script src="_framework/blazor.webassembly#[.{fingerprint}].js"></script>
 </body>
 
 </html>
