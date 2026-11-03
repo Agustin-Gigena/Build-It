@@ -58,7 +58,7 @@ runs:
         DEP=$(curl -s "https://api.cloudflare.com/client/v4/accounts/$CF_ACCOUNT/pages/projects/buildit-qa/deployments?per_page=1" -H "Authorization: Bearer $CF_TOKEN" | python3 -c "import json,sys; print(json.load(sys.stdin)['result'][0]['id'])")
         curl -s "https://api.cloudflare.com/client/v4/accounts/$CF_ACCOUNT/pages/projects/buildit-qa/deployments/$DEP/history/files" \
           -H "Authorization: Bearer $CF_TOKEN" -o /tmp/files.json -w "API files: %{http_code}\n"
-        python3 -c "import json; d=json.load(open('/tmp/files.json')); r=d['result']; files=r.get('files'); print('environment:', r.get('environment'), '| url:', r.get('url')); print('tipo de files:', type(files)); print('total files:', len(files) if hasattr(files,'__len__') else 'n/a'); print('muestra:', json.dumps(files)[:600] if not isinstance(files, list) else json.dumps(files[:15])[:600])"
+        python3 -c "import json; d=json.load(open('/tmp/files.json')); r=d['result']; files=r.get('files'); print('total:', len(files)); fw=[k for k in files if k.startswith('/_framework/')]; print('archivos en /_framework/:', len(fw)); print('blazor.webassembly.js presente:', '/_framework/blazor.webassembly.js' in files); print('blazor variants:', [k for k in fw if 'blazor' in k.lower()][:6]); print('primeros .js de _framework:', [k for k in fw if k.endswith('.js')][:8])"
       shell: bash
 
     # Crea el proyecto si no existe (falla si ya existe: se ignora)
