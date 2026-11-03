@@ -58,7 +58,7 @@ runs:
         DEP=$(curl -s "https://api.cloudflare.com/client/v4/accounts/$CF_ACCOUNT/pages/projects/buildit-qa/deployments?per_page=1" -H "Authorization: Bearer $CF_TOKEN" | python3 -c "import json,sys; print(json.load(sys.stdin)['result'][0]['id'])")
         curl -s "https://api.cloudflare.com/client/v4/accounts/$CF_ACCOUNT/pages/projects/buildit-qa/deployments/$DEP/history/files" \
           -H "Authorization: Bearer $CF_TOKEN" -o /tmp/files.json -w "API files: %{http_code}\n"
-        python3 -c "import json; d=json.load(open('/tmp/files.json')); r=d.get('result'); print('success:', d.get('success'), '| total archivos snapshot:', len(r) if isinstance(r,list) else 'n/a'); [print('  ', f) for f in (r[:8] if isinstance(r,list) else [])]"
+        python3 -c "import json; d=json.load(open('/tmp/files.json')); print('success:', d.get('success'), '| errors:', d.get('errors'), '| keys result:', list(d.get('result', {}).keys()) if isinstance(d.get('result'), dict) else type(d.get('result'))); print('RAW:', json.dumps(d)[:800])"
       shell: bash
 
     # Crea el proyecto si no existe (falla si ya existe: se ignora)
