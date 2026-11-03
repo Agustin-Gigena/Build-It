@@ -22,6 +22,9 @@ runs:
     - name: Deploy to Cloudflare Pages (QA)
       if: ${{ inputs.environment == 'QA' }}
       uses: cloudflare/wrangler-action@v3
+      env:
+        CLOUDFLARE_API_TOKEN: ${{ inputs.cloudflare_token }}
+        CLOUDFLARE_ACCOUNT_ID: ${{ inputs.cloudflare_account_id }}
       with:
         apiToken: ${{ inputs.cloudflare_token }}
         accountId: ${{ inputs.cloudflare_account_id }}
@@ -29,6 +32,9 @@ runs:
     - name: Deploy to Cloudflare Pages (Prod)
       if: ${{ inputs.environment == 'Prod' }}
       uses: cloudflare/wrangler-action@v3
+      env:
+        CLOUDFLARE_API_TOKEN: ${{ inputs.cloudflare_token }}
+        CLOUDFLARE_ACCOUNT_ID: ${{ inputs.cloudflare_account_id }}
       with:
         apiToken: ${{ inputs.cloudflare_token }}
         accountId: ${{ inputs.cloudflare_account_id }}
