@@ -1,2 +1,5 @@
-# Blazor WebAssembly SPA fallback: todas las rutas devuelven index.html
-/*    /index.html   200
+# Cloudflare Pages: rutas explicitas con fallback SPA.
+# NO usar catch-all /* -> los rewrites 200 tienen precedencia sobre assets
+# estaticos y rompen _framework/ del runtime Blazor WASM.
+/counter    /index.html  200
+/fetchdata  /index.html  200
