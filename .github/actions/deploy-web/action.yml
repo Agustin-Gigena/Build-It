@@ -17,6 +17,15 @@ runs:
       run: dotnet publish src/BuildIt.Web/BuildIt.Web.csproj -c Release -o ./dist
       shell: bash
 
+    # El bundle de CSS aislado de la RCL se genera con hash de contenido y el
+    # SDK no reescribe la referencia en el index.html del host: se reescribe aquí.
+    - name: Reescribir link del bundle CSS aislado con su hash
+      run: |
+        BUNDLE=$(basename "$(ls dist/wwwroot/_content/BuildIt.SharedUI/BuildIt.SharedUI.*.bundle.scp.css | head -1)")
+        sed -i "s/BuildIt.SharedUI.bundle.scp.css/$BUNDLE/" dist/wwwroot/index.html
+        grep -o "$BUNDLE" dist/wwwroot/index.html
+      shell: bash
+
     # Crea el proyecto si no existe (falla si ya existe: se ignora)
     - name: Asegurar proyecto Cloudflare Pages (QA)
       if: ${{ inputs.environment == 'QA' }}
