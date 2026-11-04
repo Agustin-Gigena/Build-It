@@ -1,26 +1,100 @@
 name: Deploy MAUI
-description: Construye el APK de Android de la app MAUI y lo sube como artifact
+description: Construye la app MAUI Android y despliega como APK (artifact) o publica una nueva version en Google Play Store
 inputs:
   environment:
     required: true
     description: Entorno de destino (QA o Prod)
+  target:
+    required: false
+    description: Destino del deploy (apk o playstore)
+    default: apk
+  play_service_account_json:
+    required: false
+    description: JSON de la service account de Google Play Console (requerido si target=playstore)
+  play_track:
+    required: false
+    description: Track de Play Store (internal, alpha, beta, production). Default internal en QA, production en Prod
+  keystore_base64:
+    required: false
+    description: Keystore de firma codificado en base64 (requerido si target=playstore)
+  keystore_password:
+    required: false
+    description: Password del keystore y de la key (requerido si target=playstore)
+  keystore_alias:
+    required: false
+    description: Alias de la key dentro del keystore (requerido si target=playstore)
 runs:
   using: composite
   steps:
+    - name: Validar inputs
+      run: |
+        if [ "${{ inputs.target }}" != "apk" ] && [ "${{ inputs.target }}" != "playstore" ]; then
+          echo "::error::target invalido: '${{ inputs.target }}'. Valores permitidos: apk, playstore"
+          exit 1
+        fi
+        if [ "${{ inputs.target }}" = "playstore" ]; then
+          if [ -z "${{ inputs.play_service_account_json }}" ]; then
+            echo "::error::target=playstore requiere el input play_service_account_json"
+            exit 1
+          fi
+          if [ -z "${{ inputs.keystore_base64 }}" ] || [ -z "${{ inputs.keystore_password }}" ] || [ -z "${{ inputs.keystore_alias }}" ]; then
+            echo "::error::target=playstore requiere keystore_base64, keystore_password y keystore_alias (Google rechaza AABs sin firma de release)"
+            exit 1
+          fi
+        fi
+      shell: bash
+
     - name: Instalar workload MAUI (Android)
       run: dotnet workload install maui-android
       shell: bash
+
+    # Firma de release: Google Play rechaza AABs firmados con la key de debug
+    - name: Decodificar keystore de firma
+      if: ${{ inputs.target == 'playstore' }}
+      run: |
+        echo "${{ inputs.keystore_base64 }}" | base64 -d > signing.keystore
+      shell: bash
+
     - name: Build Android APK (Release)
+      if: ${{ inputs.target == 'apk' }}
       run: |
         dotnet build src/BuildIt.Maui/BuildIt.Maui.csproj \
           -f net10.0-android \
           -p:AndroidOnly=true \
           -c Release
       shell: bash
+
+    - name: Build Android AAB firmado (Release)
+      if: ${{ inputs.target == 'playstore' }}
+      run: |
+        dotnet build src/BuildIt.Maui/BuildIt.Maui.csproj \
+          -f net10.0-android \
+          -p:AndroidOnly=true \
+          -c Release \
+          -p:AndroidPackageFormat=aab \
+          -p:AndroidKeyStore=true \
+          -p:AndroidSigningKeyStore="$(pwd)/signing.keystore" \
+          -p:AndroidSigningKeyAlias="${{ inputs.keystore_alias }}" \
+          -p:AndroidSigningKeyPass="${{ inputs.keystore_password }}" \
+          -p:AndroidSigningStorePass="${{ inputs.keystore_password }}"
+      shell: bash
+
     - name: Subir APK como artifact
+      if: ${{ inputs.target == 'apk' }}
       uses: actions/upload-artifact@v4
       with:
         name: buildit-maui-apk-${{ inputs.environment }}
         path: |
           src/BuildIt.Maui/bin/Release/net10.0-android/**/*.apk
         retention-days: 30
+
+    - name: Publicar en Google Play Store
+      if: ${{ inputs.target == 'playstore' }}
+      uses: r0adkll/upload-google-play@v2
+      with:
+        serviceAccountJsonPlainText: ${{ inputs.play_service_account_json }}
+        packageName: com.buildit.app
+        releaseFiles: src/BuildIt.Maui/bin/Release/net10.0-android/*.aab
+        # QA -> track internal (testers); Prod -> track production
+        track: ${{ inputs.play_track != '' && inputs.play_track || (inputs.environment == 'QA' && 'internal' || 'production') }}
+        status: completed

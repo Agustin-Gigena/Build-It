@@ -24,8 +24,16 @@ on:
       run_maui:
         required: false
         type: boolean
-        description: Ejecutar build de MAUI Android
+        description: Ejecutar deploy de MAUI Android
         default: false
+      maui_target:
+        required: false
+        type: choice
+        description: Destino del deploy de MAUI (solo si run_maui)
+        options:
+          - apk
+          - playstore
+        default: apk
 
 jobs:
   deploy-web:
@@ -63,3 +71,9 @@ jobs:
       - uses: ./.github/actions/deploy-maui
         with:
           environment: ${{ inputs.environment }}
+          target: ${{ inputs.maui_target }}
+          play_service_account_json: ${{ secrets.PLAY_STORE_SERVICE_ACCOUNT_JSON }}
+          play_track: ${{ inputs.maui_target == 'playstore' && inputs.environment == 'Prod' && 'production' || '' }}
+          keystore_base64: ${{ secrets.MAUI_KEYSTORE_BASE64 }}
+          keystore_password: ${{ secrets.MAUI_KEYSTORE_PASSWORD }}
+          keystore_alias: ${{ secrets.MAUI_KEYSTORE_ALIAS }}
