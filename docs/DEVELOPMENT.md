@@ -1,6 +1,9 @@
 # Flujo de desarrollo — BuildIt
 
-Congelado en `feat/arquitectura-monorepo`. Stack: .NET 10 · OpenIddict 7.7.2 · EF Core 10 · MySQL 8.4 · xUnit v2 (VSTest) · Testcontainers.
+> Cómo corre y se despliega cada componente: [ARCHITECTURE.md](ARCHITECTURE.md).
+> Stack: .NET 10 · OpenIddict 7.7.2 · EF Core 10 · MySQL 8.4 · xUnit v2 (VSTest) · Testcontainers.
+
+Congelado en `feat/arquitectura-monorepo`.
 
 ## Ramas y releases
 
